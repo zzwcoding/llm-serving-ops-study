@@ -42,7 +42,7 @@ scrape_configs:
 ```
 
 3. 启动:`./prometheus --config.file=prometheus.yml`(占着一个前台窗口,和 vLLM 一样)
-4. 验证抄到了:浏览器/接口查 `http://localhost:9090/api/v1/query?query=vllm:gpu_cache_usage_perc`
+4. 验证抄到了:浏览器/接口查 `http://localhost:9090/api/v1/query?query=vllm:kv_cache_usage_perc`
 
 ## 新技术点四要素
 

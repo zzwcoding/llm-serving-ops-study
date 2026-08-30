@@ -1,0 +1,96 @@
+{
+  "title": "vllm-监控",
+  "description": "vLLM 推理服务四件套:KV 缓存水位 / TTFT P99 / TPOT P99 / 吞吐 / 请求状态",
+  "uid": "vllm-monitor-001",
+  "timezone": "browser",
+  "schemaVersion": 41,
+  "version": 1,
+  "editable": true,
+  "refresh": "5s",
+  "time": { "from": "now-15m", "to": "now" },
+  "annotations": { "list": [] },
+  "links": [],
+  "tags": ["vllm"],
+  "templating": { "list": [] },
+  "panels": [
+    {
+      "id": 1,
+      "title": "KV 缓存使用率(逼近 1 = 要排队)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "cfwp0q374s074b" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "fieldConfig": {
+        "defaults": { "unit": "percentunit", "min": 0, "max": 1, "custom": { "drawStyle": "line", "fillOpacity": 20 } },
+        "overrides": []
+      },
+      "targets": [
+        { "refId": "A", "datasource": { "type": "prometheus", "uid": "cfwp0q374s074b" },
+          "expr": "vllm:kv_cache_usage_perc", "legendFormat": "KV 缓存使用率", "editorMode": "code", "range": true }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "TTFT 首 token 延迟 P99(秒)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "cfwp0q374s074b" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "fieldConfig": {
+        "defaults": { "unit": "s", "custom": { "drawStyle": "line", "fillOpacity": 20 } },
+        "overrides": []
+      },
+      "targets": [
+        { "refId": "A", "datasource": { "type": "prometheus", "uid": "cfwp0q374s074b" },
+          "expr": "histogram_quantile(0.99, sum by (le) (rate(vllm:time_to_first_token_seconds_bucket[5m])))",
+          "legendFormat": "TTFT P99", "editorMode": "code", "range": true }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "TPOT 每 token 延迟 P99(秒)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "cfwp0q374s074b" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "s", "custom": { "drawStyle": "line", "fillOpacity": 20 } },
+        "overrides": []
+      },
+      "targets": [
+        { "refId": "A", "datasource": { "type": "prometheus", "uid": "cfwp0q374s074b" },
+          "expr": "histogram_quantile(0.99, sum by (le) (rate(vllm:request_time_per_output_token_seconds_bucket[5m])))",
+          "legendFormat": "TPOT P99", "editorMode": "code", "range": true }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "输出吞吐(tokens/s)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "cfwp0q374s074b" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "fieldConfig": {
+        "defaults": { "unit": "short", "custom": { "drawStyle": "line", "fillOpacity": 20 } },
+        "overrides": []
+      },
+      "targets": [
+        { "refId": "A", "datasource": { "type": "prometheus", "uid": "cfwp0q374s074b" },
+          "expr": "rate(vllm:generation_tokens_total[1m])", "legendFormat": "生成 tokens/s", "editorMode": "code", "range": true }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "请求状态(正在算 / 排队中)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "cfwp0q374s074b" },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 16 },
+      "fieldConfig": {
+        "defaults": { "unit": "short", "custom": { "drawStyle": "line", "fillOpacity": 20 } },
+        "overrides": []
+      },
+      "targets": [
+        { "refId": "A", "datasource": { "type": "prometheus", "uid": "cfwp0q374s074b" },
+          "expr": "vllm:num_requests_running", "legendFormat": "正在算", "editorMode": "code", "range": true },
+        { "refId": "B", "datasource": { "type": "prometheus", "uid": "cfwp0q374s074b" },
+          "expr": "vllm:num_requests_waiting", "legendFormat": "排队中", "editorMode": "code", "range": true }
+      ]
+    }
+  ]
+}

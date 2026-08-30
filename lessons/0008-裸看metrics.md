@@ -25,7 +25,7 @@ curl 看一眼 = 手动查账
 `curl -s http://localhost:8000/metrics` 出来几百行,每行长这样:
 
 ```
-vllm:gpu_cache_usage_perc{model_name="Qwen/Qwen2.5-1.5B-Instruct"} 0.00012
+vllm:kv_cache_usage_perc{model_name="Qwen/Qwen2.5-1.5B-Instruct"} 0.00012
 ```
 
 拆成三块:`指标名{标签=筛选条件} 数值`。像超市小票:品名{分店=xx} 金额。
@@ -34,7 +34,7 @@ vllm:gpu_cache_usage_perc{model_name="Qwen/Qwen2.5-1.5B-Instruct"} 0.00012
 
 | 指标 | 记账方式 | 大白话 |
 |---|---|---|
-| `vllm:gpu_cache_usage_perc` | 当前值 | **KV 缓存车位占了几成**(0~1),逼近 1 就是请求要排队了 |
+| `vllm:kv_cache_usage_perc` | 当前值 | **KV 缓存车位占了几成**(0~1),逼近 1 就是请求要排队了 |
 | `vllm:num_requests_running` / `waiting` | 当前值 | 正在接待几个 / 排队几个请求 |
 | `vllm:prompt_tokens_total` / `generation_tokens_total` | 只增不减的累计数 | 累计收了多少字、吐了多少字(算吞吐用) |
 | `vllm:time_to_first_token_seconds` | 分桶统计(histogram) | **TTFT 分布**:多少请求的首字在 0.1s 内、多少在 1s 内… |
