@@ -1,1 +1,14 @@
 .DS_Store
+
+# interview-cards: cards/sample/shards 都是副产物,不进 git
+# assembly/ 是最终交付物(总册 md + pdf + 合并脚本),保留
+interview-cards/cards/
+interview-cards/sample/
+interview-cards/shards/
+
+# knowledge-cards: scratch/ 是过程稿(每篇 lesson 一个 .cards.md),不入 git
+# 终稿(知识卡片.md/pdf + build_final.py)保留
+knowledge-cards/scratch/
+
+# Chrome headless 渲染中间产物(可由 md 重生),不入 git
+*.html
